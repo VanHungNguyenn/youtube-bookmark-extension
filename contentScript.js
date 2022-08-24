@@ -26,8 +26,6 @@
 
 		currentVideoBookmarks = await fetchBookmarks()
 
-		console.log({ bookmarkBtnExists })
-
 		if (!bookmarkBtnExists) {
 			const bookmarkBtn = document.createElement('img')
 
@@ -50,17 +48,12 @@
 	const addNewBookmarkEventHandler = async () => {
 		const currentTime = youtubePlayer.currentTime
 
-		console.log(currentTime)
-		console.log(getTime(currentTime))
-
 		const newBookmark = {
 			time: currentTime,
 			desc: `Bookmark at ${getTime(currentTime)}`,
 		}
 
 		currentVideoBookmarks = await fetchBookmarks()
-
-		console.log(newBookmark)
 
 		chrome.storage.sync.set({
 			[currentVideo]: JSON.stringify(
