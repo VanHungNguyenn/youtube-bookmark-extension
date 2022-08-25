@@ -9,6 +9,24 @@
 		if (type === 'NEW') {
 			currentVideo = videoId
 			newVideoLoaded()
+		} else if (type === 'PLAY') {
+			youtubePlayer.currentTime = value
+		} else if (type === 'DELETE') {
+			console.log(value)
+
+			console.log('1', currentVideoBookmarks)
+
+			currentVideoBookmarks = currentVideoBookmarks.filter(
+				(bookmark) => bookmark.time != value
+			)
+
+			console.log('2', currentVideoBookmarks)
+
+			chrome.storage.sync.set({
+				[currentVideo]: JSON.stringify(currentVideoBookmarks),
+			})
+
+			response(currentVideoBookmarks)
 		}
 	})
 

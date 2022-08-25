@@ -1,4 +1,4 @@
-import { getCurrentTab } from './utils.js'
+import { getActiveTabURL } from './utils.js'
 
 // adding a new bookmark row to the popup
 const addNewBookmark = (bookmarksElement, bookmark) => {
@@ -38,9 +38,35 @@ const viewBookmarks = (currentBookmarks = []) => {
 	}
 }
 
-const onPlay = (e) => {}
+const onPlay = async (e) => {
+	const bookmarkTime =
+		e.target.parentNode.parentNode.getAttribute('timestamp')
 
-const onDelete = (e) => {}
+	const activeTab = await getActiveTabURL()
+
+	chrome.tabs.sendMessage(activeTab.id, {
+		type: 'PLAY',
+		value: bookmarkTime,
+	})
+}
+
+const onDelete = async (e) => {
+	const bookmarkTime =
+		e.target.parentNode.parentNode.getAttribute('timestamp')
+
+	const activeTab = await getActiveTabURL()
+
+	const bookmartElementToDelete = document.getElementById(
+		`bookmark-${bookmarkTime}`
+	)
+
+	bookmartElementToDelete.parentNode.removeChild(bookmartElementToDelete)
+
+	chrome.tabs.sendMessage(activeTab.id, {
+		type: 'DELETE',
+		value: bookmarkTime,
+	})
+}
 
 const setBookmarkAttributes = (src, eventListener, controlParentElement) => {
 	const controlElement = document.createElement('img')
@@ -52,7 +78,7 @@ const setBookmarkAttributes = (src, eventListener, controlParentElement) => {
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-	const activeTab = await getCurrentTab()
+	const activeTab = await getActiveTabURL()
 
 	const queryParameters = activeTab.url.split('?')[1]
 	const urlParameters = new URLSearchParams(queryParameters)
